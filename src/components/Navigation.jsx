@@ -7,6 +7,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import MovieFilterOutlinedIcon from "@mui/icons-material/MovieFilterOutlined";
+import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
 import {
   AppBar,
   Avatar,
@@ -28,6 +29,11 @@ const pages = [
     title: "About",
     icon: <InfoOutlinedIcon fontSize="medium" />,
     link: "/about",
+  },
+  {
+    title: "New",
+    icon: <NewspaperOutlinedIcon fontSize="medium" />,
+    link: "/news",
   },
   {
     title: "Contact",

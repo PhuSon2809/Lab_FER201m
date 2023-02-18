@@ -9,6 +9,54 @@
   color: #ff6500;
 }
 
+.card-image {
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
+  overflow: hidden;
+
+  .img-hover {
+    width: 100%;
+    border-radius: 20px;
+    transition: all 0.25s ease-in-out;
+  }
+
+  &:hover {
+    .img-hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+
+
+.img-scroll {
+  margin-bottom: 50px;
+  height: 145vh;
+  border-radius: 10px;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    border-radius: 0;
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    height: 100px;
+    background-color: #ff66003c;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  img {
+    width: 100%;
+  }
+}
+
 .swiper {
   width: 100%;
   height: 100%;
@@ -40,4 +88,3 @@
   height: 100%;
   object-fit: cover;
 }
-

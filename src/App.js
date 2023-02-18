@@ -9,7 +9,7 @@ import Contact from "./components/Contact";
 import NotFound from "./components/NotFound";
 import Navigation from "./components/Navigation";
 import PresentationFilm from "./components/PresentationFilm";
-import "./App.css";
+import "./App.scss";
 import { useContext } from "react";
 import { ThemeContext } from "./components/ThemeContext";
 

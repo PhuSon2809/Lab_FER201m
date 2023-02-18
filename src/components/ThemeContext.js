@@ -4,14 +4,18 @@ const themes = {
   dark: {
     backgroundColor: "#161819",
     backgroundContent: "#262a2e",
+    backgroundInnner: "#ff6500",
     color: "white",
     icon: "white",
+    shadow: "0 10px 10px rgba(0, 0, 0, 0.2)",
   },
   light: {
     backgroundColor: "white",
     backgroundContent: "#f9f9ff",
+    backgroundInnner: "#ff6600a8",
     color: "black",
     icon: "#ff6500",
+    shadow: "0 15px 40px 5px rgba(132, 132, 133, 0.15)",
   },
 };
 
