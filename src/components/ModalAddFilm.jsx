@@ -39,6 +39,16 @@ const SubmitButton = styled(Button)({
   },
 });
 
+const TextTitle = styled(DialogTitle)({
+  fontSize: "2rem",
+  fontWeight: "600",
+  letterSpacing: "2px",
+  textTransform: "capitalize",
+  color: "#000",
+  textDecoration: "underline",
+  textDecorationColor: "#ff6500",
+});
+
 function ModalAddFilm({ isOpen, toogleOpen }) {
   const dispatch = useDispatch();
   const { theme } = useContext(ThemeContext);
@@ -82,16 +92,6 @@ function ModalAddFilm({ isOpen, toogleOpen }) {
         .min(10, "Must be 10 characters or more."),
       clip: Yup.string().required("Required"),
     }),
-  });
-
-  const TextTitle = styled(DialogTitle)({
-    fontSize: "2rem",
-    fontWeight: "600",
-    letterSpacing: "2px",
-    textTransform: "capitalize",
-    color: theme.color,
-    textDecoration: "underline",
-    textDecorationColor: "#ff6500",
   });
 
   return (

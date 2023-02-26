@@ -167,7 +167,6 @@ function Contact() {
             ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {
               width: "300px",
               maxWidth: "300px",
-              background: theme.backgroundColor,
             },
           }}
           open={isOpenModalDelete}

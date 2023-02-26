@@ -41,6 +41,16 @@ const SubmitButton = styled(Button)({
   },
 });
 
+const TextTitle = styled(DialogTitle)({
+  fontSize: "2rem",
+  fontWeight: "600",
+  letterSpacing: "2px",
+  textTransform: "capitalize",
+  color: "#000",
+  textDecoration: "underline",
+  textDecorationColor: "#ff6500",
+});
+
 function ModalContact({ isOpen, toogleOpen }) {
   const dispatch = useDispatch();
   const { theme } = useContext(ThemeContext);
@@ -83,15 +93,7 @@ function ModalContact({ isOpen, toogleOpen }) {
     }),
   });
 
-  const TextTitle = styled(DialogTitle)({
-    fontSize: "2rem",
-    fontWeight: "600",
-    letterSpacing: "2px",
-    textTransform: "capitalize",
-    color: theme.color,
-    textDecoration: "underline",
-    textDecorationColor: "#ff6500",
-  });
+
 
   return (
     <Dialog
@@ -99,7 +101,6 @@ function ModalContact({ isOpen, toogleOpen }) {
         ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {
           width: "550px",
           maxWidth: "550px",
-          background: theme.backgroundColor,
         },
       }}
       open={isOpen}
