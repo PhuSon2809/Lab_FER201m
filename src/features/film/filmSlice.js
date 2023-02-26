@@ -78,6 +78,7 @@ const filmSlice = createSlice({
         toast.error("Update film fail!");
       })
       .addCase(deleteFilm.fulfilled, (state) => {
+        state.isLoading = false;
         toast.success("Delete film successfully!");
       })
       .addCase(deleteFilm.rejected, (state) => {

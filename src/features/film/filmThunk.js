@@ -1,5 +1,5 @@
 import axiosClient from "../../api/axiosClient";
-import { getAllFilms } from "./filmSlice";
+import { getAllFilms, getFilm } from "./filmSlice";
 
 export const getAllFilmsThunk = async (_, thunkAPI) => {
   try {
@@ -39,6 +39,7 @@ export const updateFilmThunk = async ({ filmId, data }, thunkAPI) => {
     .then((response) => {
       if (response) {
         thunkAPI.dispatch(getAllFilms());
+        thunkAPI.dispatch(getFilm(filmId));
         console.log("Update film successfully.");
       }
     })

@@ -100,7 +100,7 @@ function ModalAddFilm({ isOpen, toogleOpen }) {
         ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {
           width: "600px",
           maxWidth: "600px",
-          background: theme.backgroundColor,
+          // background: theme.backgroundColor,
         },
       }}
       open={isOpen}
