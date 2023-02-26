@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import StarIcon from "@mui/icons-material/Star";
 import {
@@ -7,13 +7,15 @@ import {
   Card,
   CardContent,
   CardMedia,
+  CircularProgress,
   Container,
-  Typography
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { getFilm } from "../features/film/filmSlice";
 import { useModal } from "../hooks/useModal";
-import { ListOfFilms } from "../shared/ListOfFilms";
 import ModalCase from "./ModalCase";
 import { ThemeContext } from "./ThemeContext";
 
@@ -35,8 +37,19 @@ const TitleContent = styled(Typography)({
   color: "#ff6500",
 });
 
+const BoxLoading = styled(Box)({
+  width: "100%",
+  height: "400px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
 function Detail() {
   const { id } = useParams();
+  const dispatch = useDispatch();
+  const { isLoading, isEditing, film } = useSelector((state) => state.film);
+  console.log(film);
   const { theme } = useContext(ThemeContext);
   const { toogleOpen, isOpen } = useModal();
 
@@ -66,92 +79,98 @@ function Detail() {
     color: theme.color,
   });
 
-  const film = ListOfFilms.find((film) => {
-    return film.id == id;
-  });
+  useEffect(() => {
+    dispatch(getFilm(id));
+  }, []);
 
   return (
     <Container>
-      <Card sx={{m:"40px 0 50px 0", background: theme.backgroundColor }}>
-        <div style={{ positions: "relative" }}>
-          <CardMedia
-            sx={{ height: 500 }}
-            image={film.cover}
-            title={film.title}
-          />
-          <Box
-            sx={{
-              display: { xs: "none", md: "block" },
-              position: "absolute",
-              left: "230px",
-              bottom: "-70px",
-            }}
-          >
-            <img
-              src={film.image}
-              alt={film.title}
-              style={{
-                width: " 230px",
-                boxShadow: "2px 3px 2px 2px rgb(225 101 0 / 20%)",
-              }}
+      {isLoading ? (
+        <BoxLoading>
+          <CircularProgress color="warning" />
+        </BoxLoading>
+      ) : (
+        <Card sx={{ m: "40px 0 50px 0", background: theme.backgroundColor }}>
+          <div style={{ positions: "relative" }}>
+            <CardMedia
+              sx={{ height: 500 }}
+              image={film.cover}
+              title={film.title}
             />
-            <Box sx={{ textAlign: "center" }} color="#ff6500">
-              <StarIcon />
-              <StarIcon />
-              <StarIcon />
-              <StarIcon />
-              <StarIcon />
-            </Box>
-          </Box>
-        </div>
-        <CardContent sx={{ display: { xs: "none", md: "flex" } }}>
-          <Box sx={{ pl: "300px", pr: "25px" }}>
-            <TextTitle variant="h4">{film.title}</TextTitle>
-            <Text>
-              Release Year: <TextBold>{film.year}</TextBold>
-            </Text>
-            <Text>
-              Nation: <TextBold>{film.nation}</TextBold>
-            </Text>
-            <Box sx={{ p: "5px 10px", border: "1px solid #ff6500" }}>
-              <TitleContent>Movie content:</TitleContent>
-              <TextContent>{film.content}</TextContent>
-            </Box>
-            <VideoButton
-              variant="contained"
-              startIcon={<PlayArrowIcon />}
-              onClick={toogleOpen}
+            <Box
+              sx={{
+                display: { xs: "none", md: "block" },
+                position: "absolute",
+                left: "230px",
+                bottom: "-70px",
+              }}
             >
-              Watch video
-            </VideoButton>
-          </Box>
-        </CardContent>
-        <CardContent sx={{ display: { xs: "block", md: "none" } }}>
-          <Box>
-            <TextTitle variant="h4">{film.title}</TextTitle>
-            <Text>
-              Release Year: <TextBold>{film.year}</TextBold>
-            </Text>
-            <Text>
-              Nation: <TextBold>{film.nation}</TextBold>
-            </Text>
-            <Box sx={{ p: "5px 10px", border: "1px solid #ff6500" }}>
-              <TitleContent>Movie content:</TitleContent>
-              <TextContent>{film.content}</TextContent>
+              <img
+                src={film.image}
+                alt={film.title}
+                style={{
+                  width: " 230px",
+                  boxShadow: "2px 3px 2px 2px rgb(225 101 0 / 20%)",
+                }}
+              />
+              <Box sx={{ textAlign: "center" }} color="#ff6500">
+                <StarIcon />
+                <StarIcon />
+                <StarIcon />
+                <StarIcon />
+                <StarIcon />
+              </Box>
             </Box>
-            <VideoButton
-              variant="contained"
-              startIcon={<PlayArrowIcon />}
-              onClick={toogleOpen}
-            >
-              Watch video
-            </VideoButton>
-          </Box>
-        </CardContent>
-        {isOpen && (
-          <ModalCase toogleOpen={toogleOpen} isOpen={isOpen} film={film} />
-        )}
-      </Card>
+          </div>
+          <CardContent sx={{ display: { xs: "none", md: "flex" } }}>
+            <Box sx={{ pl: "300px", pr: "25px" }}>
+              <TextTitle variant="h4">{film.title}</TextTitle>
+              <Text>
+                Release Year: <TextBold>{film.year}</TextBold>
+              </Text>
+              <Text>
+                Nation: <TextBold>{film.nation}</TextBold>
+              </Text>
+              <Box sx={{ p: "5px 10px", border: "1px solid #ff6500" }}>
+                <TitleContent>Movie content:</TitleContent>
+                <TextContent>{film.content}</TextContent>
+              </Box>
+              <VideoButton
+                variant="contained"
+                startIcon={<PlayArrowIcon />}
+                onClick={toogleOpen}
+              >
+                Watch video
+              </VideoButton>
+            </Box>
+          </CardContent>
+          <CardContent sx={{ display: { xs: "block", md: "none" } }}>
+            <Box>
+              <TextTitle variant="h4">{film.title}</TextTitle>
+              <Text>
+                Release Year: <TextBold>{film.year}</TextBold>
+              </Text>
+              <Text>
+                Nation: <TextBold>{film.nation}</TextBold>
+              </Text>
+              <Box sx={{ p: "5px 10px", border: "1px solid #ff6500" }}>
+                <TitleContent>Movie content:</TitleContent>
+                <TextContent>{film.content}</TextContent>
+              </Box>
+              <VideoButton
+                variant="contained"
+                startIcon={<PlayArrowIcon />}
+                onClick={toogleOpen}
+              >
+                Watch video
+              </VideoButton>
+            </Box>
+          </CardContent>
+          {isOpen && (
+            <ModalCase toogleOpen={toogleOpen} isOpen={isOpen} film={film} />
+          )}
+        </Card>
+      )}
     </Container>
   );
 }

@@ -1,26 +1,39 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import {
   Box,
   Button,
-  Card,
+  CircularProgress,
   Container,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import EditIcon from "@mui/icons-material/Edit";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { ListOfNations } from "../shared/ListOfNation";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import { useModal } from "../hooks/useModal";
+import ModalContact from "./ModalContact";
+import { ThemeContext } from "./ThemeContext";
+import {
+  deleteUser,
+  getAllUsers,
+  setAddUser,
+  setEditUser,
+} from "../features/user/userSlice";
 
-const SubmitButton = styled(Button)({
-  width: "100%",
-  padding: "5px 10px",
+const ModalButton = styled(Button)({
   textTransform: "capitalize",
   fontWeight: "bold",
   color: "white",
@@ -31,203 +44,174 @@ const SubmitButton = styled(Button)({
   },
 });
 
-const BoxImage = styled(Grid)({
+const BoxTitle = styled(Box)({
   width: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+});
+
+const BoxLoading = styled(Box)({
+  width: "100%",
+  height: "400px",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 });
 
-const TextTitle = styled(Typography)({
-  padding: "5px 10px",
-  width: "fit-content",
-  marginBottom: "40px",
-  fontSize: "2rem",
-  fontWeight: "600",
-  letterSpacing: "3px",
-  textTransform: "capitalize",
-  color: "white",
-  background: "#ff6500",
-  borderRadius: "5px",
-  boxShadow: "2px 3px 2px 2px rgb(0 0 0 / 20%)",
+const TableCellHeader = styled(TableCell)({
+  color: "#fff",
+  fontWeight: "bold",
 });
 
 function Contact() {
-  const [nation, setNation] = useState("");
+  const { theme } = useContext(ThemeContext);
 
-  const handleChange = (event) => {
-    setNation(event.target.value);
-  };
-
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      email: "",
-      phone: "",
-      nation: 0,
-      message: "",
-    },
-    onSubmit: (values) => {
-      console.log(formik.values);
-      alert(JSON.stringify(formik.values));
-    },
-    validationSchema: Yup.object({
-      name: Yup.string()
-        .required("Required")
-        .min(2, "Must be 2 characters or more"),
-      email: Yup.string().required("Required").email("Invalid email address."),
-      phone: Yup.number()
-        .integer()
-        .required("Required")
-        .typeError("Please enter a valid number."),
-      nation: Yup.number().integer().typeError("Please select a program."),
-      message: Yup.string()
-        .required("Required")
-        .min(10, "Must be 10 characters or more."),
-    }),
+  const TextTitle = styled(Typography)({
+    fontSize: "2rem",
+    fontWeight: "600",
+    letterSpacing: "2px",
+    textTransform: "capitalize",
+    color: theme.color,
+    textDecoration: "underline",
+    textDecorationColor: "#ff6500",
+    marginBottom: "10px",
   });
+
+  const dispatch = useDispatch();
+  const { toogleOpen, isOpen } = useModal();
+  const { toogleOpen: toogleModalDelete, isOpen: isOpenModalDelete } =
+    useModal();
+  const { isLoading, users } = useSelector((state) => state.user);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    dispatch(getAllUsers());
+  }, []);
 
   return (
     <Container>
-      <Grid container>
-        <BoxImage item xs={12} sm={5} md={6}>
-          <img
-            src="./assets/images/contact.png"
-            alt="contact"
-            style={{ width: "100%" }}
-          />
-        </BoxImage>
-        <Grid
-          item
-          xs={12}
-          sm={7}
-          md={6}
-          sx={{ display: "flex", alignItems: "center" }}
+      <BoxTitle>
+        <TextTitle>List Contact</TextTitle>
+        <ModalButton
+          startIcon={<ControlPointIcon />}
+          onClick={() => {
+            toogleOpen();
+            dispatch(setAddUser());
+          }}
         >
-          <Card
-            sx={{
-              p: "20px",
-              borderRadius: "10px",
-              boxShadow: "2px 3px 3px 1px #ff6500",
-            }}
-          >
-            <TextTitle>Contact us</TextTitle>
-            <form onSubmit={formik.handleSubmit}>
-              <FormControl fullWidth sx={{ mb: "15px" }}>
-                <TextField
-                  fullWidth
-                  name="name"
-                  variant="outlined"
-                  color="warning"
-                  size="small"
-                  label="Your Name"
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                />
-                {formik.errors.name && (
-                  <Typography
-                    sx={{ ml: "5px", minHeight: "5px" }}
-                    variant="caption"
-                    color="red"
-                  >
-                    {formik.errors.name}
-                  </Typography>
-                )}
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: "15px" }}>
-                <TextField
-                  name="phone"
-                  label="Your Phone"
-                  variant="outlined"
-                  size="small"
-                  color="warning"
-                  value={formik.values.phone}
-                  onChange={formik.handleChange}
-                />
-                {formik.errors.phone && (
-                  <Typography sx={{ ml: "5px" }} variant="caption" color="red">
-                    {formik.errors.phone}
-                  </Typography>
-                )}
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: "15px" }}>
-                <TextField
-                  name="email"
-                  label="Email"
-                  variant="outlined"
-                  size="small"
-                  color="warning"
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                />
-                {formik.errors.email && (
-                  <Typography sx={{ ml: "5px" }} variant="caption" color="red">
-                    {formik.errors.email}
-                  </Typography>
-                )}
-              </FormControl>
-              <FormControl
-                variant="outlined"
-                fullWidth
-                size="small"
-                sx={{ mb: "15px" }}
-                color="warning"
-              >
-                <InputLabel id="demo-simple-select-standard-label">
-                  Choose your favorite nation
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
-                  name="nation"
-                  value={formik.values.nation}
-                  onChange={formik.handleChange}
-                  label="Choose your favorite nation"
+          Add new contact
+        </ModalButton>
+        {isOpen && <ModalContact toogleOpen={toogleOpen} isOpen={isOpen} />}
+      </BoxTitle>
+
+      {isLoading ? (
+        <BoxLoading>
+          <CircularProgress color="warning" />
+        </BoxLoading>
+      ) : (
+        <TableContainer sx={{ mt: "20px" }} component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead sx={{ backgroundColor: "#ff6500", color: "#fff" }}>
+              <TableRow>
+                <TableCellHeader sx={{ width: "5%" }}>No</TableCellHeader>
+                <TableCellHeader width="15.7%">Name</TableCellHeader>
+                <TableCellHeader width="15.7%">Phone</TableCellHeader>
+                <TableCellHeader width="15.7%">Email</TableCellHeader>
+                <TableCellHeader width="15.7%">Nation favorite</TableCellHeader>
+                <TableCellHeader width="15.7%">Content</TableCellHeader>
+                <TableCellHeader width="15.7%">Action</TableCellHeader>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((user, index) => (
+                <TableRow
+                  key={user.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  {ListOfNations.map((nation) => (
-                    <MenuItem key={nation.id} value={nation.id}>
-                      {nation.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              {formik.values.nation == 0 && (
-                <Typography sx={{ ml: "5px" }} variant="caption" color="red">
-                  {formik.errors.nation}
-                </Typography>
-              )}
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                }}
-              >
-                <EditIcon sx={{ mr: 1, my: 0.5 }} />
-                <TextField
-                  label="Your Content"
-                  variant="outlined"
-                  multiline
-                  fullWidth
-                  size="small"
-                  color="warning"
-                  minRows={3}
-                  name="message"
-                  value={formik.values.message}
-                  onChange={formik.handleChange}
-                />
-              </Box>
-              {formik.errors.message && (
-                <Typography sx={{ ml: "35px" }} variant="caption" color="red">
-                  {formik.errors.message}
-                </Typography>
-              )}
-              <SubmitButton sx={{ mt: 5 }} type="submit">
-                Submit
-              </SubmitButton>
-            </form>
-          </Card>
-        </Grid>
-      </Grid>
+                  <TableCell sx={{ width: "5%" }}>{(index += 1)}</TableCell>
+                  <TableCell width="15.7%">{user.name}</TableCell>
+                  <TableCell width="15.7%">{user.phone}</TableCell>
+                  <TableCell width="15.7%">{user.email}</TableCell>
+                  <TableCell width="15.7%">{user.nation}</TableCell>
+                  <TableCell width="15.7%">{user.message}</TableCell>
+                  <TableCell width="15.7%">
+                    <IconButton
+                      color="error"
+                      onClick={() => {
+                        setUser(user);
+                        toogleModalDelete();
+                      }}
+                    >
+                      <DeleteForeverIcon />
+                    </IconButton>
+                    <IconButton
+                      color="success"
+                      onClick={() => {
+                        dispatch(setEditUser(user));
+                        toogleOpen();
+                      }}
+                    >
+                      <BorderColorIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+      {isOpenModalDelete && (
+        <Dialog
+          sx={{
+            ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {
+              width: "300px",
+              maxWidth: "300px",
+              background: theme.backgroundColor,
+            },
+          }}
+          open={isOpenModalDelete}
+          onClose={toogleModalDelete}
+        >
+          <DialogContent sx={{ width: "100%" }}>
+            <Typography>Do you want to delete user?</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
+              onClick={toogleModalDelete}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              onClick={() => {
+                dispatch(deleteUser(user.id));
+                toogleModalDelete();
+              }}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      <ToastContainer
+        position="top-right"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        limit={1}
+      />
     </Container>
   );
 }

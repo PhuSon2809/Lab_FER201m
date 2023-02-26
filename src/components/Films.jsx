@@ -1,19 +1,31 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import PlayCircleFilledWhiteOutlinedIcon from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
 import {
   Box,
   Card,
   Tooltip,
   CardMedia,
   IconButton,
-  Typography
+  Typography,
+  Menu,
+  MenuItem,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { useModal } from "../hooks/useModal";
 import ModalInformation from "./ModalInformation";
 import { ThemeContext } from "./ThemeContext";
+import { deleteFilm, setEditFilm } from "../features/film/filmSlice";
+import { useDispatch } from "react-redux";
+import ModalAddFilm from "./ModalAddFilm";
 
 const CardBox = styled(Card)({
   boxShadow:
@@ -32,6 +44,16 @@ const BoxContent = styled(Box)({
   bottom: 0,
 });
 
+const BoxAction = styled(Box)({
+  width: "100%",
+  padding: "10px",
+  display: "flex",
+  alignItems: "flex-start",
+  justifyContent: "flex-end",
+  position: "absolute",
+  top: 0,
+});
+
 const BoxRow = styled(Box)({
   display: "flex",
   gap: "8px",
@@ -40,8 +62,10 @@ const BoxRow = styled(Box)({
 });
 
 function Films({ film }) {
+  const dispatch = useDispatch();
   const { theme } = useContext(ThemeContext);
   const { toogleOpen, isOpen } = useModal();
+  const { toogleOpen: toogleOpenAddFilm, isOpen: isOpenAddFilm } = useModal();
 
   const TextTitle = styled(Typography)({
     padding: "5px 10px",
@@ -55,6 +79,15 @@ function Films({ film }) {
       textDecorationColor: "#ff6500",
     },
   });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <>
@@ -80,16 +113,102 @@ function Films({ film }) {
               </BoxRow>
               <Tooltip title="Detail" placement="top">
                 <Link to={`detail/${film.id}`}>
-                {/* <Link onClick={toogleOpen}> */}
                   <IconButton sx={{ color: "white" }}>
                     <PlayCircleFilledWhiteOutlinedIcon />
                   </IconButton>
                 </Link>
               </Tooltip>
             </BoxContent>
+            <BoxAction>
+              <IconButton
+                sx={{
+                  backgroundColor: "#ff5833",
+                  color: "#fff",
+                  "&:hover": { backgroundColor: "#ff5833" },
+                }}
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem sx={{ p: 1 }}>
+                  <Button
+                    startIcon={<DeleteForeverIcon />}
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                      handleClose();
+                      toogleOpen();
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </MenuItem>
+                <MenuItem sx={{ p: 1 }}>
+                  <Button
+                    startIcon={<BorderColorIcon />}
+                    variant="contained"
+                    color="success"
+                    onClick={handleClose}
+                    fullWidth
+                  >
+                    Edit
+                  </Button>
+                </MenuItem>
+              </Menu>
+            </BoxAction>
           </div>
         </CardBox>
         <TextTitle>{film.title}</TextTitle>
+        {isOpen && (
+          <Dialog
+            sx={{
+              ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {
+                width: "300px",
+                maxWidth: "300px",
+                background: theme.backgroundColor,
+              },
+            }}
+            open={isOpen}
+            onClose={toogleOpen}
+          >
+            <DialogContent sx={{ width: "100%" }}>
+              <Typography>Do you want to delete film?</Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                onClick={toogleOpen}
+              >
+                Close
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                size="small"
+                onClick={() => {
+                  dispatch(deleteFilm(film.id));
+                  toogleOpen();
+                }}
+              >
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
       </Box>
       <Box
         sx={{
@@ -113,23 +232,80 @@ function Films({ film }) {
               </BoxRow>
               <Tooltip title="Detail" placement="top">
                 <Link to={`detail/${film.id}`}>
-                {/* <Link onClick={toogleOpen}> */}
                   <IconButton sx={{ color: "white" }}>
                     <PlayCircleFilledWhiteOutlinedIcon />
                   </IconButton>
                 </Link>
               </Tooltip>
             </BoxContent>
+            <BoxAction>
+              <IconButton
+                sx={{
+                  backgroundColor: "#ff5833",
+                  color: "#fff",
+                  "&:hover": { backgroundColor: "#ff5833" },
+                }}
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem sx={{ p: 1 }}>
+                  <Button
+                    startIcon={<DeleteForeverIcon />}
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                      handleClose();
+                      toogleOpen();
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </MenuItem>
+                <MenuItem sx={{ p: 1 }} onClick={handleClose}>
+                  <Button
+                    startIcon={<BorderColorIcon />}
+                    variant="contained"
+                    color="success"
+                    onClick={() => {
+                      dispatch(setEditFilm(film));
+                      toogleOpenAddFilm();
+                    }}
+                    fullWidth
+                  >
+                    Edit
+                  </Button>
+                </MenuItem>
+              </Menu>
+              {isOpenAddFilm && (
+                <ModalAddFilm
+                  toogleOpen={toogleOpenAddFilm}
+                  isOpen={isOpenAddFilm}
+                />
+              )}
+            </BoxAction>
           </div>
         </CardBox>
         <TextTitle>{film.title}</TextTitle>
-        {isOpen && (
+        {/* {isOpen && (
           <ModalInformation
             toogleOpen={toogleOpen}
             isOpen={isOpen}
             film={film}
           />
-        )}
+        )} */}
       </Box>
     </>
   );

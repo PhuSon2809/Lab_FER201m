@@ -3,7 +3,7 @@ import { useState } from "react";
 function useModal() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toogleOpen = () => {
+  const toogleOpen = (title) => {
     setIsOpen(!isOpen);
   };
 
