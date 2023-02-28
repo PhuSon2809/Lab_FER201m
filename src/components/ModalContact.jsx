@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
@@ -18,7 +18,6 @@ import { styled } from "@mui/material/styles";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ListOfNations } from "../shared/ListOfNation";
-import { ThemeContext } from "./ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
 import { createUser, updateUser } from "../features/user/userSlice";
 
@@ -53,7 +52,6 @@ const TextTitle = styled(DialogTitle)({
 
 function ModalContact({ isOpen, toogleOpen }) {
   const dispatch = useDispatch();
-  const { theme } = useContext(ThemeContext);
   const { isEditing, user } = useSelector((state) => state.user);
 
   const formik = useFormik({

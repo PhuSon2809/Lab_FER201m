@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import PlayCircleFilledWhiteOutlinedIcon from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -21,10 +21,9 @@ import {
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import { useModal } from "../hooks/useModal";
-import ModalInformation from "./ModalInformation";
 import { ThemeContext } from "./ThemeContext";
 import { deleteFilm, setEditFilm } from "../features/film/filmSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ModalAddFilm from "./ModalAddFilm";
 
 const CardBox = styled(Card)({
@@ -63,6 +62,8 @@ const BoxRow = styled(Box)({
 
 function Films({ film }) {
   const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.login);
+
   const { theme } = useContext(ThemeContext);
   const { toogleOpen, isOpen } = useModal();
   const { toogleOpen: toogleOpenAddFilm, isOpen: isOpenAddFilm } = useModal();
@@ -89,6 +90,12 @@ function Films({ film }) {
     setAnchorEl(null);
   };
 
+  const [isLogin, setIsLogin] = useState(null);
+
+  useEffect(() => {
+    setIsLogin(JSON.parse(localStorage.getItem("userLogin")));
+  }, [isLoading]);
+  
   return (
     <>
       <Box
@@ -119,55 +126,57 @@ function Films({ film }) {
                 </Link>
               </Tooltip>
             </BoxContent>
-            <BoxAction>
-              <IconButton
-                sx={{
-                  backgroundColor: "#ff5833",
-                  color: "#fff",
-                  "&:hover": { backgroundColor: "#ff5833" },
-                }}
-                aria-controls={open ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-              >
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                <MenuItem sx={{ p: 1 }}>
-                  <Button
-                    startIcon={<DeleteForeverIcon />}
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      handleClose();
-                      toogleOpen();
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </MenuItem>
-                <MenuItem sx={{ p: 1 }}>
-                  <Button
-                    startIcon={<BorderColorIcon />}
-                    variant="contained"
-                    color="success"
-                    onClick={handleClose}
-                    fullWidth
-                  >
-                    Edit
-                  </Button>
-                </MenuItem>
-              </Menu>
-            </BoxAction>
+            {isLogin && (
+              <BoxAction>
+                <IconButton
+                  sx={{
+                    backgroundColor: "#ff5833",
+                    color: "#fff",
+                    "&:hover": { backgroundColor: "#ff5833" },
+                  }}
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  <MenuItem sx={{ p: 1 }}>
+                    <Button
+                      startIcon={<DeleteForeverIcon />}
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        handleClose();
+                        toogleOpen();
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </MenuItem>
+                  <MenuItem sx={{ p: 1 }}>
+                    <Button
+                      startIcon={<BorderColorIcon />}
+                      variant="contained"
+                      color="success"
+                      onClick={handleClose}
+                      fullWidth
+                    >
+                      Edit
+                    </Button>
+                  </MenuItem>
+                </Menu>
+              </BoxAction>
+            )}
           </div>
         </CardBox>
         <TextTitle>{film.title}</TextTitle>
@@ -237,64 +246,66 @@ function Films({ film }) {
                 </Link>
               </Tooltip>
             </BoxContent>
-            <BoxAction>
-              <IconButton
-                sx={{
-                  backgroundColor: "#ff5833",
-                  color: "#fff",
-                  "&:hover": { backgroundColor: "#ff5833" },
-                }}
-                aria-controls={open ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-              >
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-                <MenuItem sx={{ p: 1 }}>
-                  <Button
-                    startIcon={<DeleteForeverIcon />}
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                      handleClose();
-                      toogleOpen();
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </MenuItem>
-                <MenuItem sx={{ p: 1 }} onClick={handleClose}>
-                  <Button
-                    startIcon={<BorderColorIcon />}
-                    variant="contained"
-                    color="success"
-                    onClick={() => {
-                      dispatch(setEditFilm(film));
-                      toogleOpenAddFilm();
-                    }}
-                    fullWidth
-                  >
-                    Edit
-                  </Button>
-                </MenuItem>
-              </Menu>
-              {isOpenAddFilm && (
-                <ModalAddFilm
-                  toogleOpen={toogleOpenAddFilm}
-                  isOpen={isOpenAddFilm}
-                />
-              )}
-            </BoxAction>
+            {isLoading && (
+              <BoxAction>
+                <IconButton
+                  sx={{
+                    backgroundColor: "#ff5833",
+                    color: "#fff",
+                    "&:hover": { backgroundColor: "#ff5833" },
+                  }}
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  <MenuItem sx={{ p: 1 }}>
+                    <Button
+                      startIcon={<DeleteForeverIcon />}
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        handleClose();
+                        toogleOpen();
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </MenuItem>
+                  <MenuItem sx={{ p: 1 }} onClick={handleClose}>
+                    <Button
+                      startIcon={<BorderColorIcon />}
+                      variant="contained"
+                      color="success"
+                      onClick={() => {
+                        dispatch(setEditFilm(film));
+                        toogleOpenAddFilm();
+                      }}
+                      fullWidth
+                    >
+                      Edit
+                    </Button>
+                  </MenuItem>
+                </Menu>
+                {isOpenAddFilm && (
+                  <ModalAddFilm
+                    toogleOpen={toogleOpenAddFilm}
+                    isOpen={isOpenAddFilm}
+                  />
+                )}
+              </BoxAction>
+            )}
           </div>
         </CardBox>
         <TextTitle>{film.title}</TextTitle>

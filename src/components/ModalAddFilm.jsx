@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   Button,
   Dialog,
@@ -18,7 +18,6 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { createFilm, updateFilm } from "../features/film/filmSlice";
 import { ListOfNations } from "../shared/ListOfNation";
-import { ThemeContext } from "./ThemeContext";
 
 const CloseButton = styled(Button)({
   marginTop: "10px",
@@ -51,7 +50,6 @@ const TextTitle = styled(DialogTitle)({
 
 function ModalAddFilm({ isOpen, toogleOpen }) {
   const dispatch = useDispatch();
-  const { theme } = useContext(ThemeContext);
   const { isEditing, film } = useSelector((state) => state.film);
 
   const formik = useFormik({

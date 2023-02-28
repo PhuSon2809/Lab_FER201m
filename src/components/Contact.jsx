@@ -79,29 +79,40 @@ function Contact() {
   });
 
   const dispatch = useDispatch();
+
   const { toogleOpen, isOpen } = useModal();
   const { toogleOpen: toogleModalDelete, isOpen: isOpenModalDelete } =
     useModal();
+
   const { isLoading, users } = useSelector((state) => state.user);
+  const { isLoading: loadingLogin } = useSelector((state) => state.login);
+
   const [user, setUser] = useState();
+  const [isLogin, setIsLogin] = useState(null);
 
   useEffect(() => {
     dispatch(getAllUsers());
   }, []);
 
+  useEffect(() => {
+    setIsLogin(JSON.parse(localStorage.getItem("userLogin")));
+  }, [loadingLogin]);
+
   return (
     <Container>
       <BoxTitle>
         <TextTitle>List Contact</TextTitle>
-        <ModalButton
-          startIcon={<ControlPointIcon />}
-          onClick={() => {
-            toogleOpen();
-            dispatch(setAddUser());
-          }}
-        >
-          Add new contact
-        </ModalButton>
+        {isLogin && (
+          <ModalButton
+            startIcon={<ControlPointIcon />}
+            onClick={() => {
+              toogleOpen();
+              dispatch(setAddUser());
+            }}
+          >
+            Add new contact
+          </ModalButton>
+        )}
         {isOpen && <ModalContact toogleOpen={toogleOpen} isOpen={isOpen} />}
       </BoxTitle>
 
@@ -120,7 +131,9 @@ function Contact() {
                 <TableCellHeader width="15.7%">Email</TableCellHeader>
                 <TableCellHeader width="15.7%">Nation favorite</TableCellHeader>
                 <TableCellHeader width="15.7%">Content</TableCellHeader>
-                <TableCellHeader width="15.7%">Action</TableCellHeader>
+                {isLogin && (
+                  <TableCellHeader width="15.7%">Action</TableCellHeader>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -135,6 +148,7 @@ function Contact() {
                   <TableCell width="15.7%">{user.email}</TableCell>
                   <TableCell width="15.7%">{user.nation}</TableCell>
                   <TableCell width="15.7%">{user.message}</TableCell>
+                  {isLogin && (
                   <TableCell width="15.7%">
                     <IconButton
                       color="error"
@@ -155,6 +169,7 @@ function Contact() {
                       <BorderColorIcon />
                     </IconButton>
                   </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

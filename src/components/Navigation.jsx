@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import React, { useContext, useEffect, useState } from "react";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import HomeIcon from "@mui/icons-material/Home";
@@ -7,7 +6,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import MovieFilterOutlinedIcon from "@mui/icons-material/MovieFilterOutlined";
-import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined';
+import NewspaperOutlinedIcon from "@mui/icons-material/NewspaperOutlined";
 import {
   AppBar,
   Avatar,
@@ -17,11 +16,14 @@ import {
   Menu,
   MenuItem,
   Toolbar,
-  Typography
+  Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import LoginGoogle from "./LoginGoogle";
 import { ThemeContext } from "./ThemeContext";
+import { setLoading } from "../features/login/loginSlide";
 
 const pages = [
   { title: "Home", icon: <HomeIcon fontSize="medium" />, link: "/" },
@@ -40,16 +42,14 @@ const pages = [
     icon: <ContactMailIcon fontSize="medium" />,
     link: "/contact",
   },
-  {
-    title: "Add",
-    icon: <AddCircleOutlineIcon fontSize="medium" />,
-    link: "/add",
-  },
 ];
 
 function Navigation() {
+  const dispatch = useDispatch();
   const { theme, toggle, dark } = useContext(ThemeContext);
+  const { isLoading } = useSelector((state) => state.login);
 
+  const [isLogin, setIsLogin] = useState();
   const [anchorElNav, setAnchorElNav] = useState(null);
 
   const handleOpenNavMenu = (event) => {
@@ -58,6 +58,24 @@ function Navigation() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  useEffect(() => {
+    setIsLogin(JSON.parse(localStorage.getItem("userLogin")));
+  }, [isLoading]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userLogin");
+    dispatch(setLoading());
   };
 
   return (
@@ -208,10 +226,41 @@ function Navigation() {
                 <LightModeOutlinedIcon sx={{ color: theme.icon }} />
               )}
             </IconButton>
-            <IconButton sx={{ p: 0, ml: 2, mr: 2 }}>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-            </IconButton>
+            {isLogin ? (
+              <IconButton
+                sx={{ p: 0, ml: 2, mr: 2 }}
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={(event) => {
+                  setAnchorEl(event.currentTarget);
+                }}
+              >
+                <Avatar alt={isLogin.name} src={isLogin.imageUrl} />
+              </IconButton>
+            ) : (
+              <LoginGoogle />
+            )}
           </Box>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem sx={{ p: 1 }} onClick={handleClose}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleLogout()}
+              >
+                Logout
+              </Button>
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </Container>
     </AppBar>

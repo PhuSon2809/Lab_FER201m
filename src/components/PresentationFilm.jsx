@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import {
   Box,
@@ -63,10 +63,17 @@ function PresentationFilm() {
   const dispatch = useDispatch();
   const { toogleOpen, isOpen } = useModal();
   const { isLoading, films } = useSelector((state) => state.film);
+  const { isLoading: loadingLogin } = useSelector((state) => state.login);
+
+  const [isLogin, setIsLogin] = useState(null);
 
   useEffect(() => {
     dispatch(getAllFilms());
   }, []);
+
+  useEffect(() => {
+    setIsLogin(JSON.parse(localStorage.getItem("userLogin")));
+  }, [loadingLogin]);
 
   return (
     <Container>
@@ -95,15 +102,17 @@ function PresentationFilm() {
           <Box sx={{ pt: 5 }}>
             <BoxTitle>
               <TextTitle>List Films</TextTitle>
-              <ModalButton
-                startIcon={<ControlPointIcon />}
-                onClick={() => {
-                  toogleOpen();
-                  dispatch(setAddFilm());
-                }}
-              >
-                Add new film
-              </ModalButton>
+              {isLogin && (
+                <ModalButton
+                  startIcon={<ControlPointIcon />}
+                  onClick={() => {
+                    toogleOpen();
+                    dispatch(setAddFilm());
+                  }}
+                >
+                  Add new film
+                </ModalButton>
+              )}
               {isOpen && (
                 <ModalAddFilm toogleOpen={toogleOpen} isOpen={isOpen} />
               )}
