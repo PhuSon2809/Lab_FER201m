@@ -95,7 +95,7 @@ function Films({ film }) {
   useEffect(() => {
     setIsLogin(JSON.parse(localStorage.getItem("userLogin")));
   }, [isLoading]);
-  
+
   return (
     <>
       <Box
@@ -163,18 +163,27 @@ function Films({ film }) {
                       Delete
                     </Button>
                   </MenuItem>
-                  <MenuItem sx={{ p: 1 }}>
+                  <MenuItem sx={{ p: 1 }} onClick={handleClose}>
                     <Button
                       startIcon={<BorderColorIcon />}
                       variant="contained"
                       color="success"
-                      onClick={handleClose}
+                      onClick={() => {
+                        dispatch(setEditFilm(film));
+                        toogleOpenAddFilm();
+                      }}
                       fullWidth
                     >
                       Edit
                     </Button>
                   </MenuItem>
                 </Menu>
+                {isOpenAddFilm && (
+                  <ModalAddFilm
+                    toogleOpen={toogleOpenAddFilm}
+                    isOpen={isOpenAddFilm}
+                  />
+                )}
               </BoxAction>
             )}
           </div>
@@ -246,7 +255,7 @@ function Films({ film }) {
                 </Link>
               </Tooltip>
             </BoxContent>
-            {isLoading && (
+            {isLogin && (
               <BoxAction>
                 <IconButton
                   sx={{

@@ -299,7 +299,7 @@ function Detail() {
                 <TitleContent>Movie content:</TitleContent>
                 <TextContent>{film.content}</TextContent>
               </Box>
-              <Box>
+              <BoxTitle>
                 <VideoButton
                   variant="contained"
                   startIcon={<PlayArrowIcon />}
@@ -307,7 +307,107 @@ function Detail() {
                 >
                   Watch video
                 </VideoButton>
-              </Box>
+                {isLogin && (
+                  <>
+                    <IconButton
+                      sx={{
+                        backgroundColor: "#ff5833",
+                        color: "#fff",
+                        "&:hover": { backgroundColor: "#ff5833" },
+                      }}
+                      aria-controls={open ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? "true" : undefined}
+                      onClick={handleClick}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        "aria-labelledby": "basic-button",
+                      }}
+                    >
+                      <MenuItem sx={{ p: 1 }}>
+                        <Button
+                          startIcon={<DeleteForeverIcon />}
+                          variant="contained"
+                          color="error"
+                          onClick={() => {
+                            handleClose();
+                            toogleOpenDeleteFilm();
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </MenuItem>
+                      <MenuItem sx={{ p: 1 }} onClick={handleClose}>
+                        <Button
+                          startIcon={<BorderColorIcon />}
+                          variant="contained"
+                          color="success"
+                          onClick={() => {
+                            dispatch(setEditFilm(film));
+                            toogleOpenAddFilm();
+                          }}
+                          fullWidth
+                        >
+                          Edit
+                        </Button>
+                      </MenuItem>
+                    </Menu>
+                    {isOpenDeleteFilm && (
+                      <Dialog
+                        sx={{
+                          ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {
+                            width: "300px",
+                            maxWidth: "300px",
+                          },
+                        }}
+                        open={isOpenDeleteFilm}
+                        onClose={toogleOpenDeleteFilm}
+                      >
+                        <DialogContent sx={{ width: "100%" }}>
+                          <Typography>Do you want to delete film?</Typography>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            size="small"
+                            onClick={toogleOpenDeleteFilm}
+                          >
+                            Close
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="error"
+                            size="small"
+                            onClick={() => {
+                              dispatch(deleteFilm(film.id));
+                              toogleOpenDeleteFilm();
+                              if (!isLoading) {
+                                navigate("/");
+                              }
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    )}
+                    {isOpenAddFilm && (
+                      <ModalAddFilm
+                        toogleOpen={toogleOpenAddFilm}
+                        isOpen={isOpenAddFilm}
+                      />
+                    )}
+                  </>
+                )}
+              </BoxTitle>
             </Box>
           </CardContent>
           {isOpen && (
