@@ -13,6 +13,8 @@ const initialState = {
   isEditing: false,
   films: [],
   film: {},
+  count: 0,
+  resultPerPage: 0,
 };
 
 export const getAllFilms = createAsyncThunk(
@@ -43,7 +45,9 @@ const filmSlice = createSlice({
       })
       .addCase(getAllFilms.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.films = [...action.payload];
+        state.count = action.payload.count;
+        state.resultPerPage = action.payload.resultPerPage;
+        state.films = [...action.payload.response];
       })
       .addCase(getAllFilms.rejected, (state) => {
         state.isLoading = false;

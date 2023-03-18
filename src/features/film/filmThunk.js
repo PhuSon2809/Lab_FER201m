@@ -1,10 +1,24 @@
+import axios from "axios";
 import axiosClient from "../../api/axiosClient";
 import { getAllFilms, getFilm } from "./filmSlice";
 
-export const getAllFilmsThunk = async (_, thunkAPI) => {
+export const getAllFilmsThunk = async (
+  { page, nation, sortBy, typeSort },
+  thunkAPI
+) => {
   try {
-    const response = await axiosClient.getByUrl("/films");
-    return response;
+    const resultPerPage = 12;
+    const url = new URL("https://63f6c63359c944921f7925eb.mockapi.io/films");
+    // url.searchParams.append("completed", false);
+    url.searchParams.append("page", page);
+    url.searchParams.append("limit", resultPerPage);
+    url.searchParams.append("nation", nation);
+    url.searchParams.append("sortBy", sortBy);
+    url.searchParams.append("order", typeSort);
+
+    const response = await axios.get(url);
+    const allFilms = await axiosClient.getByUrl("/films");
+    return { count: allFilms.length, resultPerPage, response };
   } catch (error) {
     console.log(error);
   }
